@@ -6,7 +6,10 @@
       "name": "Level 1 - Warm Up",
       "pieces": [
         "start",
+        "hidden_spawn",
         "flat",
+        "drop_tile",
+        "challenge_drop",
         "gap",
         "flat",
         "spikes",
