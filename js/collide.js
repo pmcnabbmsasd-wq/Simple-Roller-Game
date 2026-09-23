@@ -52,3 +52,12 @@ Collide.hitsFinish = function (x, y, width, height) {
   }
   return false;
 };
+
+// Is this box touching the secret-room life bonus?
+Collide.hitsLifeBonus = function (x, y, width, height) {
+  var squares = Collide.squaresUnder(x, y, width, height);
+  for (var i = 0; i < squares.length; i++) {
+    if (Level.isLifeBonus(squares[i].col, squares[i].row)) { return true; }
+  }
+  return false;
+};

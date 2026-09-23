@@ -96,6 +96,7 @@ Level.charAt = function (col, row) {
 Level.isSolid  = function (col, row) { return Level.charAt(col, row) === "#"; };
 Level.isSpike  = function (col, row) { return Level.charAt(col, row) === "^"; };
 Level.isFinish = function (col, row) { return Level.charAt(col, row) === "F"; };
+Level.isLifeBonus = function (col, row) { return Level.charAt(col, row) === "L"; };
 
 // How wide is the whole world, in pixels?
 Level.pixelWidth = function () { return Level.cols * CONFIG.TILE; };

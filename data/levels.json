@@ -1,12 +1,12 @@
 {
-  "_comment": "A level is just a list of piece names in order, left to right. Every name you use here must exist in data/pieces.json. Add, remove, or reorder pieces to build a new level. Every level should start with 'start' and end with 'finish'.",
+  "_comment": "A level is just a list of piece names in order, left to right. Every name you use here must exist in data/pieces.json. Add, remove, or reorder pieces to build a new level. Every level starts with a solid floor, so the player can walk. The underground secret room is in the second piece so it looks like a hidden chamber beneath the floor.",
 
   "levels": [
     {
       "name": "Level 1 - Warm Up",
       "pieces": [
         "start",
-        "hidden_spawn",
+        "secret_room",
         "flat",
         "drop_tile",
         "challenge_drop",

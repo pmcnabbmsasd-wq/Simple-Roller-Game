@@ -12,12 +12,14 @@
 var Game = {
   mode: "playing",   // "playing", "dead", or "won"
   levelNumber: 0,
-  lives: CONFIG.STARTING_LIVES
+  lives: CONFIG.STARTING_LIVES,
+  secretLifeAwarded: false
 };
 
 Game.startLevel = function (levelNumber) {
   Game.levelNumber = levelNumber;
   Game.lives = CONFIG.STARTING_LIVES;
+  Game.secretLifeAwarded = false;
   Level.build(levelNumber);
   Player.reset();
   Game.mode = "playing";
@@ -50,6 +52,17 @@ Game.loseLife = function () {
   Game.showMessage("You lost a life. " + Game.lives + " remaining.");
 };
 
+Game.checkSecretLife = function () {
+  if (Game.secretLifeAwarded) { return; }
+
+  if (Collide.hitsLifeBonus(Player.x, Player.y, CONFIG.PLAYER_SIZE, CONFIG.PLAYER_SIZE)) {
+    Game.lives = Game.lives + 1;
+    Game.secretLifeAwarded = true;
+    Game.showLives();
+    Game.showMessage("Secret room! You earned an extra life.");
+  }
+};
+
 // --- ONE FRAME --------------------------------------------------------
 Game.update = function () {
 
@@ -63,6 +76,7 @@ Game.update = function () {
   if (Game.mode !== "playing") { return; }
 
   Player.update();
+  Game.checkSecretLife();
 
   if (Player.isDead()) {
     Game.loseLife();

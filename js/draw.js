@@ -66,6 +66,7 @@ Draw.world = function () {
       if (here === "#") { Draw.block(x, y, size); }
       if (here === "^") { Draw.spike(x, y, size); }
       if (here === "F") { Draw.finish(x, y, size); }
+      if (here === "L") { Draw.lifeBonus(x, y, size); }
     }
   }
 };
@@ -105,6 +106,23 @@ Draw.finish = function (x, y, size) {
   ctx.lineTo(x + size - 4,     y + 12);
   ctx.lineTo(x + size / 2 + 2, y + 20);
   ctx.closePath();
+  ctx.fill();
+};
+
+// The secret-room life bonus: a black token with a white center.
+Draw.lifeBonus = function (x, y, size) {
+  var ctx = Draw.ctx;
+  var cx = x + size / 2;
+  var cy = y + size / 2;
+
+  ctx.fillStyle = "#000000";
+  ctx.beginPath();
+  ctx.arc(cx, cy, size * 0.18, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.arc(cx, cy, size * 0.08, 0, Math.PI * 2);
   ctx.fill();
 };
 
