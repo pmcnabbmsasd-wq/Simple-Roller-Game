@@ -36,10 +36,31 @@ Collide.hitsSolid = function (x, y, width, height) {
 };
 
 // Is this box touching a spike?
+// This uses a slightly smaller hit area than the full spike tile so the
+// player can fit between the sharp points more naturally.
 Collide.hitsSpike = function (x, y, width, height) {
   var squares = Collide.squaresUnder(x, y, width, height);
   for (var i = 0; i < squares.length; i++) {
-    if (Level.isSpike(squares[i].col, squares[i].row)) { return true; }
+    var col = squares[i].col;
+    var row = squares[i].row;
+
+    if (!Level.isSpike(col, row)) { continue; }
+
+    var tileLeft = col * CONFIG.TILE;
+    var tileTop = row * CONFIG.TILE;
+    var hitLeft = tileLeft + 6;
+    var hitTop = tileTop + 8;
+    var hitRight = tileLeft + CONFIG.TILE - 6;
+    var hitBottom = tileTop + CONFIG.TILE - 4;
+
+    var overlapLeft = Math.max(x, hitLeft);
+    var overlapTop = Math.max(y, hitTop);
+    var overlapRight = Math.min(x + width, hitRight);
+    var overlapBottom = Math.min(y + height, hitBottom);
+
+    if (overlapRight > overlapLeft && overlapBottom > overlapTop) {
+      return true;
+    }
   }
   return false;
 };
