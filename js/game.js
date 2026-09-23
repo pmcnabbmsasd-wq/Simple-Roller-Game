@@ -11,19 +11,43 @@
 
 var Game = {
   mode: "playing",   // "playing", "dead", or "won"
-  levelNumber: 0
+  levelNumber: 0,
+  lives: CONFIG.STARTING_LIVES
 };
 
 Game.startLevel = function (levelNumber) {
   Game.levelNumber = levelNumber;
+  Game.lives = CONFIG.STARTING_LIVES;
   Level.build(levelNumber);
   Player.reset();
   Game.mode = "playing";
+  Game.showLives();
   Game.showMessage("");
 };
 
 Game.showMessage = function (text) {
   document.getElementById("message").textContent = text;
+};
+
+Game.showLives = function () {
+  document.getElementById("lives").textContent = "Lives: " + Game.lives;
+};
+
+// Use one life and return the player to the start of the level. The level
+// stays intact, so losing a life is a checkpoint-free retry rather than a
+// full restart.
+Game.loseLife = function () {
+  Game.lives = Game.lives - 1;
+  Game.showLives();
+
+  if (Game.lives <= 0) {
+    Game.mode = "dead";
+    Game.showMessage("Game over. Press R to try again.");
+    return;
+  }
+
+  Player.reset();
+  Game.showMessage("You lost a life. " + Game.lives + " remaining.");
 };
 
 // --- ONE FRAME --------------------------------------------------------
@@ -41,8 +65,7 @@ Game.update = function () {
   Player.update();
 
   if (Player.isDead()) {
-    Game.mode = "dead";
-    Game.showMessage("You hit something. Press R to try again.");
+    Game.loseLife();
     return;
   }
 

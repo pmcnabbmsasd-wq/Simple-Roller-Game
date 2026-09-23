@@ -33,5 +33,6 @@ var CONFIG = {
                       // 0 = dead center, 1 = right on the edge
 
   // --- rules ----------------------------------------------------------
+  STARTING_LIVES: 3,  // how many attempts the player gets per level
   START_LEVEL: 0      // which level in data/levels.json to load first
 };

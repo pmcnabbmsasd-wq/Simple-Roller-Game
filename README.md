@@ -15,6 +15,10 @@ Press `Ctrl + Shift + R` to hard refresh, or you will see the old version.
 - SPACE or UP arrow - jump
 - R - restart the level
 
+The player starts with three lives. Touching spikes or falling off the world
+uses one life and returns the player to the start. When all lives are gone,
+press `R` to restart with three lives.
+
 ## Where everything lives
 
 | If you want to change... | Open this file |
