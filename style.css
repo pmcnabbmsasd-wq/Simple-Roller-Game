@@ -4,39 +4,56 @@
    ===================================================================== */
 
 body {
-  background: #ffffff;
-  color: #000000;
-  font-family: monospace;
+  background:
+    linear-gradient(#5aa9ff 0%, #8fd6ff 45%, #d7f3ff 100%);
+  color: #103d7a;
+  font-family: "Courier New", monospace;
   text-align: center;
   margin: 24px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
 h1 {
-  letter-spacing: 6px;
-  font-size: 24px;
-  margin-bottom: 16px;
+  letter-spacing: 8px;
+  font-size: 34px;
+  margin-bottom: 14px;
+  color: #f7d64f;
+  text-shadow:
+    3px 3px 0 #d04a2d,
+    6px 6px 0 #7a2b18;
 }
 
 canvas {
-  border: 3px solid #000000;
-  background: #ffffff;
+  border: 6px solid #1f3d7f;
+  background: #8ad6ff;
   display: block;
   margin: 0 auto;
+  box-shadow:
+    0 0 0 4px #f5f5f5,
+    0 10px 0 #183a74,
+    8px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
 #lives {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
   height: 20px;
-  margin: 12px 0 0;
+  margin: 16px 0 0;
+  color: #f7d64f;
+  text-shadow: 2px 2px 0 #8d2a15;
 }
 
 #message {
   font-size: 18px;
   height: 24px;
   margin-top: 8px;
+  color: #143d7d;
+  font-weight: bold;
 }
 
 .controls {
   font-size: 13px;
+  color: #183a74;
+  font-weight: bold;
 }
