@@ -1,5 +1,5 @@
 {
-  "_comment": "Every piece is 8 columns wide and 10 rows tall. Draw it like a picture. '.' is empty air, '#' is a solid block, '^' is a spike, 'S' is where the player starts, 'F' is the finish, and 'L' is the secret-room life bonus.",
+  "_comment": "Every piece is 8 columns wide and 10 rows tall. Draw it like a picture. '.' is empty air, '#' is a solid block, '^' is a spike, 'S' is where the player starts, 'F' is the finish, and 'G' is the hidden-room laser gun pickup.",
 
   "start": [
     "........",
@@ -21,7 +21,7 @@
     "........",
     "........",
     "....##..",
-    "...###L.",
+    "...###G.",
     "..#####.",
     "..#####.",
     "########"
@@ -136,10 +136,10 @@
     "........",
     "........",
     "........",
-    "........",
     "......##",
     "....####",
     "..######",
+    "########",
     "########",
     "########"
   ],

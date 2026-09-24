@@ -1,29 +1,27 @@
 /* =====================================================================
    game.js  --  THE RULES AND THE LOOP.
-
-   The game is always in exactly ONE mode: "playing", "dead", or "won".
-   Which mode it is in decides what happens each frame.
-
-   The loop runs about 60 times a second, forever. Every time it runs it
-   does the same two things: UPDATE (change the numbers) and DRAW (show
-   the numbers).
    ===================================================================== */
 
 var Game = {
-  mode: "playing",   // "playing", "dead", or "won"
+  mode: "playing",
   levelNumber: 0,
   lives: CONFIG.STARTING_LIVES,
-  secretLifeAwarded: false
+  laserGunCollected: false,
+  bullets: [],
+  ammo: 0
 };
 
 Game.startLevel = function (levelNumber) {
   Game.levelNumber = levelNumber;
   Game.lives = CONFIG.STARTING_LIVES;
-  Game.secretLifeAwarded = false;
+  Game.laserGunCollected = false;
+  Game.bullets = [];
+  Game.ammo = 0;
   Level.build(levelNumber);
   Player.reset();
   Game.mode = "playing";
   Game.showLives();
+  Game.showAmmo();
   Game.showMessage("");
 };
 
@@ -35,9 +33,12 @@ Game.showLives = function () {
   document.getElementById("lives").textContent = "Lives: " + Game.lives;
 };
 
-// Use one life and return the player to the start of the level. The level
-// stays intact, so losing a life is a checkpoint-free retry rather than a
-// full restart.
+Game.showAmmo = function () {
+  document.getElementById("ammo").textContent = Game.laserGunCollected
+    ? "Laser: " + Game.ammo + "/" + CONFIG.LASER_CLIP_SIZE
+    : "Laser: not collected";
+};
+
 Game.loseLife = function () {
   Game.lives = Game.lives - 1;
   Game.showLives();
@@ -49,34 +50,85 @@ Game.loseLife = function () {
   }
 
   Player.reset();
+  Game.bullets = [];
   Game.showMessage("You lost a life. " + Game.lives + " remaining.");
 };
 
-Game.checkSecretLife = function () {
-  if (Game.secretLifeAwarded) { return; }
+Game.checkLaserGun = function () {
+  if (Game.laserGunCollected) { return; }
 
-  if (Collide.hitsLifeBonus(Player.x, Player.y, CONFIG.PLAYER_SIZE, CONFIG.PLAYER_SIZE)) {
-    Game.lives = Game.lives + 1;
-    Game.secretLifeAwarded = true;
-    Game.showLives();
-    Game.showMessage("Secret room! You earned an extra life.");
+  if (Collide.hitsLaserGun(Player.x, Player.y, CONFIG.PLAYER_SIZE, CONFIG.PLAYER_SIZE)) {
+    Game.laserGunCollected = true;
+    Game.ammo = CONFIG.LASER_CLIP_SIZE;
+    Game.showAmmo();
+    Game.showMessage("Laser gun collected! Press X to shoot; press E to reload.");
+  }
+};
+
+Game.shoot = function () {
+  if (!Game.laserGunCollected) { return; }
+  if (Game.ammo <= 0) {
+    Game.showMessage("Out of bullets. Press E to reload.");
+    return;
+  }
+
+  var direction = Player.facing;
+  Game.bullets.push({
+    x: Player.x + (direction > 0 ? CONFIG.PLAYER_SIZE : -8),
+    y: Player.y + CONFIG.PLAYER_SIZE / 2 - 2,
+    vx: CONFIG.LASER_SPEED * direction,
+    distance: 0
+  });
+  Game.ammo = Game.ammo - 1;
+  Game.showAmmo();
+};
+
+Game.reload = function () {
+  if (!Game.laserGunCollected) { return; }
+  if (Game.ammo === CONFIG.LASER_CLIP_SIZE) {
+    Game.showMessage("Laser magazine is already full.");
+    return;
+  }
+  Game.ammo = CONFIG.LASER_CLIP_SIZE;
+  Game.showAmmo();
+  Game.showMessage("Laser reloaded.");
+};
+
+Game.updateBullets = function () {
+  for (var i = Game.bullets.length - 1; i >= 0; i--) {
+    var bullet = Game.bullets[i];
+    bullet.x = bullet.x + bullet.vx;
+    bullet.distance = bullet.distance + Math.abs(bullet.vx);
+
+    if (bullet.distance >= CONFIG.LASER_RANGE ||
+        Collide.hitsSolid(bullet.x, bullet.y, 8, 4) ||
+        bullet.x < 0 || bullet.x > Level.pixelWidth()) {
+      Game.bullets.splice(i, 1);
+    }
   }
 };
 
 // --- ONE FRAME --------------------------------------------------------
 Game.update = function () {
-
-  // R always restarts, no matter what mode we are in.
   if (Input.restart) {
     Game.startLevel(Game.levelNumber);
     return;
   }
 
-  // If we are not playing, nothing moves. We just wait for R.
   if (Game.mode !== "playing") { return; }
 
   Player.update();
-  Game.checkSecretLife();
+  Game.checkLaserGun();
+
+  if (Input.shoot) {
+    Game.shoot();
+    Input.shoot = false;
+  }
+  if (Input.reload) {
+    Game.reload();
+    Input.reload = false;
+  }
+  Game.updateBullets();
 
   if (Player.isDead()) {
     Game.loseLife();
@@ -90,7 +142,6 @@ Game.update = function () {
   }
 };
 
-// --- THE LOOP ITSELF --------------------------------------------------
 Game.loop = function () {
   Game.update();
   Draw.updateCamera();

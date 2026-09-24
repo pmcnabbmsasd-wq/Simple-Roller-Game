@@ -27,6 +27,11 @@ var CONFIG = {
   PLAYER_SIZE: 32,    // the player collides as a 32x32 box
   PLAYER_RADIUS: 16,  // ...but is DRAWN as a circle this big
 
+  // --- laser gun -------------------------------------------------------
+  LASER_CLIP_SIZE: 5,
+  LASER_SPEED: 12,
+  LASER_RANGE: 520,
+
   // --- drawing --------------------------------------------------------
   LINE_WIDTH: 3,      // thickness of every black outline
   DOT_DISTANCE: 0.55, // how far the off-center dot sits from the middle
