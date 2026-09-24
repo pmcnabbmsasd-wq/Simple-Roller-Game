@@ -1,6 +1,5 @@
 {
-  "_comment": "A level is just a list of piece names in order, left to right. Every name you use here must exist in data/pieces.json. Add, remove, or reorder pieces to build a new level. Every level starts with a solid floor, so the player can walk. The underground secret room is in the second piece so it looks like a hidden chamber beneath the floor.",
-
+  "_comment": "A level is just a list of piece names in order, left to right. Every name you use here must exist in data/pieces.json. Add, remove, or reorder pieces to build a new level.",
   "levels": [
     {
       "name": "Level 1 - Warm Up",
@@ -19,7 +18,23 @@
       ]
     },
     {
-      "name": "Level 2 - Watch Your Step",
+      "name": "Level 2 - Dragon Pit",
+      "pieces": [
+        "start",
+        "flat",
+        "gap",
+        "gap",
+        "platform",
+        "gap",
+        "gap",
+        "gap",
+        "spikepit",
+        "flat",
+        "finish"
+      ]
+    },
+    {
+      "name": "Level 3 - Watch Your Step",
       "pieces": [
         "start",
         "spikes",

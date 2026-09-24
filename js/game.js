@@ -5,7 +5,8 @@ var Game = {
   laserGunCollected: false,
   bullets: [],
   dragons: [],
-  ammo: 0
+  ammo: 0,
+  dragonCount: 3
 };
 
 Game.startLevel = function (levelNumber) {
@@ -15,6 +16,7 @@ Game.startLevel = function (levelNumber) {
   Game.bullets = [];
   Game.dragons = [];
   Game.ammo = 0;
+  Game.dragonCount = (levelNumber === 1) ? 5 : 3;
   Level.build(levelNumber);
   Player.reset();
   Game.mode = "playing";
@@ -45,13 +47,20 @@ Game.loseLife = function () {
 };
 
 Game.spawnDragons = function () {
-  var baseX = Player.x + 260;
-  var baseY = Math.max(70, Player.y - 150);
-  Game.dragons = [
-    { x: baseX, y: baseY, homeY: baseY, phase: 0, alive: true },
-    { x: baseX + 150, y: baseY + 70, homeY: baseY + 70, phase: 2, alive: true },
-    { x: baseX + 300, y: baseY - 35, homeY: baseY - 35, phase: 4, alive: true }
-  ];
+  var count = Game.dragonCount;
+  var startX = Player.x + 220;
+  Game.dragons = [];
+
+  for (var i = 0; i < count; i++) {
+    var offset = i * 110;
+    Game.dragons.push({
+      x: startX + offset,
+      y: Math.max(40, Player.y - 100 + (i % 3) * 60),
+      homeY: Math.max(40, Player.y - 100 + (i % 3) * 60),
+      phase: i * 1.3,
+      alive: true
+    });
+  }
 };
 
 Game.checkLaserGun = function () {
@@ -61,7 +70,7 @@ Game.checkLaserGun = function () {
     Game.ammo = CONFIG.LASER_CLIP_SIZE;
     Game.spawnDragons();
     Game.showAmmo();
-    Game.showMessage("Laser gun collected! Three dragons appeared. X shoots; E reloads.");
+    Game.showMessage("Laser gun collected! Press X to shoot; press E to reload.");
   }
 };
 
