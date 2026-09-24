@@ -1,51 +1,17 @@
 {
-  "_comment": "A level is just a list of piece names in order, left to right. Every name you use here must exist in data/pieces.json. Add, remove, or reorder pieces to build a new level.",
+  "_comment": "A level is a list of piece names in order, left to right.",
   "levels": [
     {
       "name": "Level 1 - Warm Up",
-      "pieces": [
-        "start",
-        "secret_room",
-        "flat",
-        "drop_tile",
-        "challenge_drop",
-        "gap",
-        "flat",
-        "spikes",
-        "platform",
-        "stairs",
-        "finish"
-      ]
+      "pieces": ["start", "secret_room", "flat", "drop_tile", "challenge_drop", "gap", "flat", "spikes", "platform", "stairs", "finish"]
     },
     {
       "name": "Level 2 - Dragon Pit",
-      "pieces": [
-        "start",
-        "flat",
-        "gap",
-        "gap",
-        "platform",
-        "gap",
-        "gap",
-        "gap",
-        "spikepit",
-        "flat",
-        "finish"
-      ]
+      "pieces": ["start", "secret_room", "flat", "gap", "gap", "platform", "gap", "gap", "spikepit", "flat", "finish"]
     },
     {
       "name": "Level 3 - Watch Your Step",
-      "pieces": [
-        "start",
-        "spikes",
-        "gap",
-        "step",
-        "spikepit",
-        "platform",
-        "gap",
-        "flat",
-        "finish"
-      ]
+      "pieces": ["start", "spikes", "gap", "step", "spikepit", "platform", "gap", "flat", "finish"]
     }
   ]
 }

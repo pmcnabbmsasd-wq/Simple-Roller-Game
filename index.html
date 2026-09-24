@@ -7,27 +7,23 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <h1>RETRO ROLLER</h1>
-
   <canvas id="game" width="800" height="400"></canvas>
-
+  <p id="level" aria-live="polite">Loading level...</p>
   <p id="lives" aria-live="polite">Lives: 2</p>
   <p id="ammo" aria-live="polite">Laser: not collected</p>
   <p id="message">Loading...</p>
+  <button id="next-level" type="button" hidden disabled>Next Level</button>
 
   <p class="controls">
     LEFT / RIGHT arrow to roll &nbsp;&middot;&nbsp;
     SPACE or UP arrow to jump &nbsp;&middot;&nbsp;
     X to shoot &nbsp;&middot;&nbsp;
     E to reload &nbsp;&middot;&nbsp;
+    N or Next Level to continue &nbsp;&middot;&nbsp;
     R to restart
   </p>
 
-  <!-- ===================================================================
-       THE ORDER OF THESE FILES MATTERS. Each one uses the ones above it.
-       If you add a new file, add it to this list too, in the right spot.
-       =================================================================== -->
   <script src="js/config.js"></script>
   <script src="js/input.js"></script>
   <script src="js/level.js"></script>
@@ -36,6 +32,10 @@
   <script src="js/draw.js"></script>
   <script src="js/game.js"></script>
   <script src="js/main.js"></script>
-
+  <script>
+    document.getElementById("next-level").addEventListener("click", function () {
+      Game.nextLevel();
+    });
+  </script>
 </body>
 </html>
