@@ -1,25 +1,13 @@
-/* =====================================================================
-   level.js  --  BUILDING THE WORLD OUT OF PIECES.
-
-   A level is a list of piece names. A piece is a little 8-wide,
-   10-tall picture. This file glues the pictures together, left to
-   right, into one big grid.
-
-   The pictures live in data/pieces.json.
-   The lists of names live in data/levels.json.
-   ===================================================================== */
-
 var Level = {
-  pieces: null,     // every piece picture, loaded from pieces.json
-  levels: null,     // every level list, loaded from levels.json
-  grid: [],         // the finished world. grid[row][col] is one character
-  cols: 0,          // how many columns wide the finished world is
+  pieces: null,
+  levels: null,
+  grid: [],
+  cols: 0,
   name: "",
-  startX: 0,        // where the player begins, in pixels
+  startX: 0,
   startY: 0
 };
 
-// --- STEP 1: read the two data files ----------------------------------
 Level.loadData = function (whenDone) {
   fetch("data/pieces.json")
     .then(function (r) { return r.json(); })
@@ -39,37 +27,23 @@ Level.loadData = function (whenDone) {
     });
 };
 
-// --- STEP 2: glue the pieces together ---------------------------------
 Level.build = function (levelNumber) {
   var level = Level.levels[levelNumber];
   Level.name = level.name;
   Level.grid = [];
   Level.cols = level.pieces.length * CONFIG.PIECE_COLS;
 
-  // start with 10 empty rows
-  for (var row = 0; row < CONFIG.ROWS; row++) {
-    Level.grid.push("");
-  }
+  for (var row = 0; row < CONFIG.ROWS; row++) { Level.grid.push(""); }
 
-  // add each piece onto the end of every row
   for (var p = 0; p < level.pieces.length; p++) {
-    var pieceName = level.pieces[p];
-    var piece = Level.pieces[pieceName];
-
-    if (!piece) {
-      console.error("No piece named '" + pieceName + "' in data/pieces.json");
-      piece = Level.pieces["flat"];
-    }
-
+    var piece = Level.pieces[level.pieces[p]] || Level.pieces["flat"];
     for (var row = 0; row < CONFIG.ROWS; row++) {
       Level.grid[row] = Level.grid[row] + piece[row];
     }
   }
-
   Level.findStart();
 };
 
-// --- STEP 3: find the S and remember where it is ----------------------
 Level.findStart = function () {
   for (var row = 0; row < CONFIG.ROWS; row++) {
     for (var col = 0; col < Level.cols; col++) {
@@ -80,23 +54,18 @@ Level.findStart = function () {
       }
     }
   }
-  // no S found anywhere, so just start at the top left
   Level.startX = 0;
   Level.startY = 0;
 };
 
-// --- ASKING THE WORLD QUESTIONS ---------------------------------------
-// What character is at this grid square?
 Level.charAt = function (col, row) {
   if (row < 0 || row >= CONFIG.ROWS) { return "."; }
-  if (col < 0 || col >= Level.cols)  { return "."; }
+  if (col < 0 || col >= Level.cols) { return "."; }
   return Level.grid[row].charAt(col);
 };
 
-Level.isSolid  = function (col, row) { return Level.charAt(col, row) === "#"; };
-Level.isSpike  = function (col, row) { return Level.charAt(col, row) === "^"; };
+Level.isSolid = function (col, row) { return Level.charAt(col, row) === "#"; };
+Level.isSpike = function (col, row) { return Level.charAt(col, row) === "^"; };
 Level.isFinish = function (col, row) { return Level.charAt(col, row) === "F"; };
-Level.isLifeBonus = function (col, row) { return Level.charAt(col, row) === "L"; };
-
-// How wide is the whole world, in pixels?
+Level.isLaserGun = function (col, row) { return Level.charAt(col, row) === "G"; };
 Level.pixelWidth = function () { return Level.cols * CONFIG.TILE; };

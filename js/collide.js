@@ -1,22 +1,10 @@
-/* =====================================================================
-   collide.js  --  DID THE PLAYER TOUCH SOMETHING?
-
-   The player is a BOX for collision, even though it is drawn as a
-   circle. Boxes are much easier to check, and nobody can tell.
-
-   Every function here answers one yes-or-no question about a box.
-   ===================================================================== */
-
 var Collide = {};
 
-// Which grid squares does this box overlap?
-// Returns a list of { col: , row: } objects.
 Collide.squaresUnder = function (x, y, width, height) {
   var firstCol = Math.floor(x / CONFIG.TILE);
-  var lastCol  = Math.floor((x + width  - 1) / CONFIG.TILE);
+  var lastCol = Math.floor((x + width - 1) / CONFIG.TILE);
   var firstRow = Math.floor(y / CONFIG.TILE);
-  var lastRow  = Math.floor((y + height - 1) / CONFIG.TILE);
-
+  var lastRow = Math.floor((y + height - 1) / CONFIG.TILE);
   var squares = [];
   for (var row = firstRow; row <= lastRow; row++) {
     for (var col = firstCol; col <= lastCol; col++) {
@@ -26,7 +14,6 @@ Collide.squaresUnder = function (x, y, width, height) {
   return squares;
 };
 
-// Is this box inside a solid block?
 Collide.hitsSolid = function (x, y, width, height) {
   var squares = Collide.squaresUnder(x, y, width, height);
   for (var i = 0; i < squares.length; i++) {
@@ -35,35 +22,24 @@ Collide.hitsSolid = function (x, y, width, height) {
   return false;
 };
 
-// Is this box touching a spike?
 Collide.hitsSpike = function (x, y, width, height) {
   var squares = Collide.squaresUnder(x, y, width, height);
   for (var i = 0; i < squares.length; i++) {
     var col = squares[i].col;
     var row = squares[i].row;
-
     if (!Level.isSpike(col, row)) { continue; }
-
     var tileLeft = col * CONFIG.TILE;
     var tileTop = row * CONFIG.TILE;
     var hitLeft = tileLeft + 6;
     var hitTop = tileTop + 8;
     var hitRight = tileLeft + CONFIG.TILE - 6;
     var hitBottom = tileTop + CONFIG.TILE - 4;
-
-    var overlapLeft = Math.max(x, hitLeft);
-    var overlapTop = Math.max(y, hitTop);
-    var overlapRight = Math.min(x + width, hitRight);
-    var overlapBottom = Math.min(y + height, hitBottom);
-
-    if (overlapRight > overlapLeft && overlapBottom > overlapTop) {
-      return true;
-    }
+    if (Math.min(x + width, hitRight) > Math.max(x, hitLeft) &&
+        Math.min(y + height, hitBottom) > Math.max(y, hitTop)) { return true; }
   }
   return false;
 };
 
-// Is this box touching the finish?
 Collide.hitsFinish = function (x, y, width, height) {
   var squares = Collide.squaresUnder(x, y, width, height);
   for (var i = 0; i < squares.length; i++) {
@@ -72,11 +48,15 @@ Collide.hitsFinish = function (x, y, width, height) {
   return false;
 };
 
-// Is this box touching the hidden-room laser gun?
 Collide.hitsLaserGun = function (x, y, width, height) {
   var squares = Collide.squaresUnder(x, y, width, height);
   for (var i = 0; i < squares.length; i++) {
     if (Level.isLaserGun(squares[i].col, squares[i].row)) { return true; }
   }
   return false;
+};
+
+Collide.overlaps = function (aX, aY, aW, aH, bX, bY, bW, bH) {
+  return aX < bX + bW && aX + aW > bX &&
+         aY < bY + bH && aY + aH > bY;
 };
