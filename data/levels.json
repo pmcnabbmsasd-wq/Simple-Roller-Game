@@ -6,8 +6,8 @@
       "pieces": ["start", "secret_room", "flat", "drop_tile", "challenge_drop", "gap", "flat", "spikes", "platform", "stairs", "finish"]
     },
     {
-      "name": "Level 2 - Dragon Pit",
-      "pieces": ["start", "secret_room", "flat", "gap", "gap", "platform", "gap", "gap", "spikepit", "flat", "finish"]
+      "name": "Level 2 - Floating Dragon Run",
+      "pieces": ["start", "secret_room", "floating_left", "floating_center", "floating_right", "floating_wide", "floating_left", "floating_center", "floating_right", "finish"]
     },
     {
       "name": "Level 3 - Watch Your Step",
