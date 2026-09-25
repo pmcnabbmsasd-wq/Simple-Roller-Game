@@ -1,0 +1,27 @@
+{
+  "name": "simple-roller-game",
+  "version": "1.0.0",
+  "description": "A circle with an off-center dot rolls through a black and white world. It can move, jump, land on platforms, and die on spikes. It wins by touching the flag.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pmcnabbmsasd-wq/Simple-Roller-Game.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/pmcnabbmsasd-wq/Simple-Roller-Game/issues"
+  },
+  "homepage": "https://github.com/pmcnabbmsasd-wq/Simple-Roller-Game#readme",
+  "devDependencies": {
+    "playwright": "^1.63.0"
+  },
+  "dependencies": {
+    "jsdom": "^30.1.1"
+  }
+}
