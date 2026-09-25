@@ -1,14 +1,11 @@
-var Level = {
-  pieces: null,
-  levels: null,
-  grid: [],
-  cols: 0,
-  name: "",
-  startX: 0,
-  startY: 0
-};
-
 Level.loadData = function (whenDone) {
+  if (window.location.protocol === "file:") {
+    document.getElementById("message").textContent =
+      "This game must be served from a local web server. Run: python3 -m http.server 8000, then open http://localhost:8000/";
+    console.error("Local file protocol is not supported for fetch() in this game.");
+    return;
+  }
+
   fetch("data/pieces.json")
     .then(function (r) { return r.json(); })
     .then(function (piecesFile) {
@@ -26,46 +23,3 @@ Level.loadData = function (whenDone) {
       console.error(error);
     });
 };
-
-Level.build = function (levelNumber) {
-  var level = Level.levels[levelNumber];
-  Level.name = level.name;
-  Level.grid = [];
-  Level.cols = level.pieces.length * CONFIG.PIECE_COLS;
-
-  for (var row = 0; row < CONFIG.ROWS; row++) { Level.grid.push(""); }
-
-  for (var p = 0; p < level.pieces.length; p++) {
-    var piece = Level.pieces[level.pieces[p]] || Level.pieces["flat"];
-    for (var row = 0; row < CONFIG.ROWS; row++) {
-      Level.grid[row] = Level.grid[row] + piece[row];
-    }
-  }
-  Level.findStart();
-};
-
-Level.findStart = function () {
-  for (var row = 0; row < CONFIG.ROWS; row++) {
-    for (var col = 0; col < Level.cols; col++) {
-      if (Level.charAt(col, row) === "S") {
-        Level.startX = col * CONFIG.TILE;
-        Level.startY = row * CONFIG.TILE;
-        return;
-      }
-    }
-  }
-  Level.startX = 0;
-  Level.startY = 0;
-};
-
-Level.charAt = function (col, row) {
-  if (row < 0 || row >= CONFIG.ROWS) { return "."; }
-  if (col < 0 || col >= Level.cols) { return "."; }
-  return Level.grid[row].charAt(col);
-};
-
-Level.isSolid = function (col, row) { return Level.charAt(col, row) === "#"; };
-Level.isSpike = function (col, row) { return Level.charAt(col, row) === "^"; };
-Level.isFinish = function (col, row) { return Level.charAt(col, row) === "F"; };
-Level.isLaserGun = function (col, row) { return Level.charAt(col, row) === "G"; };
-Level.pixelWidth = function () { return Level.cols * CONFIG.TILE; };

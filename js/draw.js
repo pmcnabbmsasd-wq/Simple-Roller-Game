@@ -21,6 +21,7 @@ Draw.everything = function () {
   var ctx = Draw.ctx;
   ctx.fillStyle = "#8bd6ff";
   ctx.fillRect(0, 0, CONFIG.CANVAS_W, CONFIG.CANVAS_H);
+
   ctx.fillStyle = "#7ecb66";
   for (var i = 0; i < 6; i++) {
     var hillX = (-Draw.cameraX * 0.35) + i * 180;
@@ -31,10 +32,12 @@ Draw.everything = function () {
     ctx.closePath();
     ctx.fill();
   }
+
   ctx.fillStyle = "#ffe36a";
   ctx.beginPath();
   ctx.arc(680, 70, 30, 0, Math.PI * 2);
   ctx.fill();
+
   ctx.save();
   ctx.translate(-Draw.cameraX, 0);
   Draw.world();
@@ -120,6 +123,7 @@ Draw.dragons = function () {
 };
 
 Draw.fireballs = function () {
+  if (!Game.fireballs) { return; }
   var ctx = Draw.ctx;
   ctx.fillStyle = "#ff7a18";
   for (var i = 0; i < Game.fireballs.length; i++) {
@@ -131,6 +135,7 @@ Draw.fireballs = function () {
 };
 
 Draw.goombas = function () {
+  if (!Game.goombas) { return; }
   var ctx = Draw.ctx;
   for (var i = 0; i < Game.goombas.length; i++) {
     var goomba = Game.goombas[i];
