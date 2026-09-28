@@ -19,8 +19,6 @@ Level.loadData = function (whenDone) {
     return false;
   };
 
-  if (useEmbeddedData()) { return; }
-
   var baseUrl = "";
   if (window.location.protocol === "file:") {
     baseUrl = "http://localhost:8000/";

@@ -51,7 +51,7 @@ Collide.hitsFinish = function (x, y, width, height) {
 Collide.hitsLaserGun = function (x, y, width, height) {
   var squares = Collide.squaresUnder(x, y, width, height);
   for (var i = 0; i < squares.length; i++) {
-    if (Level.isLaserGun(squares[i].col, squares[i].row)) { return true; }
+    if (Level.isGun(squares[i].col, squares[i].row)) { return true; }
   }
   return false;
 };
