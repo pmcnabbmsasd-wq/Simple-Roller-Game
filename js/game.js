@@ -8,7 +8,8 @@ var Game = {
   fireballs: [],
   goombas: [],
   ammo: 0,
-  dragonCount: 3
+  dragonCount: 3,
+  bossDefeated: false
 };
 
 Game.startLevel = function (levelNumber) {
@@ -22,9 +23,16 @@ Game.startLevel = function (levelNumber) {
   Game.goombas = [];
   Game.ammo = 0;
   Game.dragonCount = (levelNumber === 1) ? 5 : 3;
+  Game.bossDefeated = false;
   Level.build(levelNumber);
   Player.reset();
-  Game.spawnGoombas();
+  if (levelNumber === 2) {
+    Game.laserGunCollected = true;
+    Game.ammo = CONFIG.LASER_CLIP_SIZE;
+    Game.spawnBoss();
+  } else {
+    Game.spawnGoombas();
+  }
   Game.mode = "playing";
   Game.showLives();
   Game.showAmmo();
@@ -81,7 +89,40 @@ Game.spawnDragons = function () {
   Game.dragons = [];
   for (var i = 0; i < Game.dragonCount; i++) {
     var homeY = Math.max(40, Player.y - 100 + (i % 3) * 60);
-    Game.dragons.push({ x: startX + i * 110, y: homeY, homeY: homeY, phase: i * 1.3, shotTimer: CONFIG.DRAGON_SHOT_INTERVAL + i * 20, alive: true });
+    Game.dragons.push({ x: startX + i * 110, y: homeY, homeY: homeY, phase: i * 1.3, shotTimer: CONFIG.DRAGON_SHOT_INTERVAL + i * 20, alive: true, size: CONFIG.DRAGON_SIZE, boss: false });
+  }
+};
+
+Game.spawnBoss = function () {
+  Game.dragons = [];
+  Game.goombas = [];
+  var boss = {
+    x: Player.x + 430,
+    y: 40,
+    homeY: 50,
+    phase: 0,
+    shotTimer: 170,
+    alive: true,
+    size: 58,
+    boss: true,
+    stage: 1,
+    hp: 6,
+    goombaTimer: 220
+  };
+  Game.dragons.push(boss);
+  Game.showMessage("Boss dragon incoming. Phase 1: standard fire.");
+};
+
+Game.spawnBossGoombas = function (dragon) {
+  var baseY = 320 - CONFIG.GOOMBA_SIZE;
+  for (var i = 0; i < 3; i++) {
+    Game.goombas.push({
+      x: dragon.x + (i - 1) * 56 + 18,
+      y: baseY,
+      size: CONFIG.GOOMBA_SIZE,
+      direction: (i % 2 === 0) ? -1 : 1,
+      alive: true
+    });
   }
 };
 
@@ -141,8 +182,28 @@ Game.updateBullets = function () {
     var removed = false;
     for (var d = Game.dragons.length - 1; d >= 0; d--) {
       var dragon = Game.dragons[d];
-      if (dragon.alive && Collide.overlaps(bullet.x, bullet.y, 8, 4, dragon.x, dragon.y, CONFIG.DRAGON_SIZE, CONFIG.DRAGON_SIZE)) {
-        dragon.alive = false;
+      var dragonSize = dragon.size || CONFIG.DRAGON_SIZE;
+      if (dragon.alive && Collide.overlaps(bullet.x, bullet.y, 8, 4, dragon.x, dragon.y, dragonSize, dragonSize)) {
+        if (dragon.boss) {
+          dragon.hp = dragon.hp - 1;
+          if (dragon.hp <= 0) {
+            dragon.alive = false;
+            Game.bossDefeated = true;
+            Game.showMessage("Boss defeated! Press R to play again.");
+          } else if (dragon.stage === 1 && dragon.hp <= 3) {
+            dragon.stage = 2;
+            dragon.shotTimer = 260;
+            Game.showMessage("Boss phase 2! Triple burst shots.");
+          } else if (dragon.stage === 2 && dragon.hp <= 1) {
+            dragon.stage = 3;
+            dragon.shotTimer = 180;
+            dragon.goombaTimer = 180;
+            Game.spawnBossGoombas(dragon);
+            Game.showMessage("Boss phase 3! Three goombas spawned.");
+          }
+        } else {
+          dragon.alive = false;
+        }
         Game.bullets.splice(i, 1);
         removed = true;
         break;
@@ -179,6 +240,38 @@ Game.updateDragons = function () {
   for (var i = 0; i < Game.dragons.length; i++) {
     var dragon = Game.dragons[i];
     if (!dragon.alive) { continue; }
+    if (dragon.boss) {
+      dragon.x -= CONFIG.DRAGON_SPEED * 0.6;
+      dragon.phase += 0.05;
+      dragon.y = dragon.homeY + Math.sin(dragon.phase) * 18;
+      dragon.shotTimer -= 1;
+      if (dragon.stage === 3) {
+        dragon.goombaTimer -= 1;
+        if (dragon.goombaTimer <= 0) {
+          Game.spawnBossGoombas(dragon);
+          dragon.goombaTimer = 220;
+        }
+      }
+      if (dragon.shotTimer <= 0) {
+        var dx = Player.x + CONFIG.PLAYER_SIZE / 2 - (dragon.x + dragon.size / 2);
+        var dy = Player.y + CONFIG.PLAYER_SIZE / 2 - (dragon.y + dragon.size / 2);
+        var distance = Math.sqrt(dx * dx + dy * dy) || 1;
+        if (dragon.stage === 1) {
+          Game.fireballs.push({ x: dragon.x + dragon.size / 2, y: dragon.y + dragon.size / 2, vx: dx / distance * CONFIG.FIREBALL_SPEED, vy: dy / distance * CONFIG.FIREBALL_SPEED, radius: 9 });
+          dragon.shotTimer = 150;
+        } else if (dragon.stage === 2) {
+          for (var b = -1; b <= 1; b++) {
+            var angle = Math.atan2(dy, dx) + b * 0.28;
+            Game.fireballs.push({ x: dragon.x + dragon.size / 2, y: dragon.y + dragon.size / 2, vx: Math.cos(angle) * CONFIG.FIREBALL_SPEED * 1.1, vy: Math.sin(angle) * CONFIG.FIREBALL_SPEED * 1.1, radius: 8 });
+          }
+          dragon.shotTimer = 260;
+        } else {
+          Game.fireballs.push({ x: dragon.x + dragon.size / 2, y: dragon.y + dragon.size / 2, vx: dx / distance * CONFIG.FIREBALL_SPEED * 1.15, vy: dy / distance * CONFIG.FIREBALL_SPEED * 1.15, radius: 10 });
+          dragon.shotTimer = 180;
+        }
+      }
+      continue;
+    }
     dragon.x -= CONFIG.DRAGON_SPEED;
     dragon.phase += 0.06;
     dragon.y = dragon.homeY + Math.sin(dragon.phase) * 28;
@@ -232,10 +325,30 @@ Game.updateFireballs = function () {
 Game.checkEnemyCollisions = function () {
   for (var i = 0; i < Game.dragons.length; i++) {
     var dragon = Game.dragons[i];
+    var dragonSize = dragon.size || CONFIG.DRAGON_SIZE;
     if (!dragon.alive || !Collide.overlaps(Player.x, Player.y, CONFIG.PLAYER_SIZE, CONFIG.PLAYER_SIZE,
-        dragon.x, dragon.y, CONFIG.DRAGON_SIZE, CONFIG.DRAGON_SIZE)) { continue; }
+        dragon.x, dragon.y, dragonSize, dragonSize)) { continue; }
     if (Player.vy > 0 && Player.y + CONFIG.PLAYER_SIZE - dragon.y < 14) {
-      dragon.alive = false;
+      if (dragon.boss) {
+        dragon.hp = dragon.hp - 1;
+        if (dragon.hp <= 0) {
+          dragon.alive = false;
+          Game.bossDefeated = true;
+          Game.showMessage("Boss defeated! Press R to play again.");
+        } else if (dragon.stage === 1 && dragon.hp <= 3) {
+          dragon.stage = 2;
+          dragon.shotTimer = 260;
+          Game.showMessage("Boss phase 2! Triple burst shots.");
+        } else if (dragon.stage === 2 && dragon.hp <= 1) {
+          dragon.stage = 3;
+          dragon.shotTimer = 180;
+          dragon.goombaTimer = 180;
+          Game.spawnBossGoombas(dragon);
+          Game.showMessage("Boss phase 3! Three goombas spawned.");
+        }
+      } else {
+        dragon.alive = false;
+      }
       Player.vy = -CONFIG.JUMP_POWER * 0.55;
       Player.onGround = false;
     } else {
@@ -259,7 +372,8 @@ Game.checkEnemyCollisions = function () {
 Game.hitsDragon = function (x, y, width, height) {
   for (var i = 0; i < Game.dragons.length; i++) {
     var dragon = Game.dragons[i];
-    if (dragon.alive && Collide.overlaps(x, y, width, height, dragon.x, dragon.y, CONFIG.DRAGON_SIZE, CONFIG.DRAGON_SIZE)) { return true; }
+    var dragonSize = dragon.size || CONFIG.DRAGON_SIZE;
+    if (dragon.alive && Collide.overlaps(x, y, width, height, dragon.x, dragon.y, dragonSize, dragonSize)) { return true; }
   }
   return false;
 };
@@ -278,6 +392,13 @@ Game.update = function () {
   if (Input.reload) { Game.reload(); Input.reload = false; }
   Game.updateBullets();
   Game.checkEnemyCollisions();
+
+  if (Game.bossDefeated) {
+    Game.mode = "won";
+    Player.won = true;
+    Game.showMessage("Boss defeated! Press R to play again.");
+    return;
+  }
 
   if (Player.isDead()) {
     if (typeof Sound !== "undefined" && Sound.playHit) { Sound.playHit(); }

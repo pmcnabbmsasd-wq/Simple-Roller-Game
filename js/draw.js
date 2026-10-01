@@ -108,17 +108,24 @@ Draw.dragons = function () {
     if (!dragon.alive) { continue; }
     var x = dragon.x;
     var y = dragon.y;
-    ctx.fillStyle = "#8b3fb0";
+    var size = dragon.size || CONFIG.DRAGON_SIZE;
+    var wingScale = dragon.boss ? 1.5 : 1;
+    ctx.fillStyle = dragon.boss ? "#7a2d8a" : "#8b3fb0";
     ctx.beginPath();
-    ctx.moveTo(x + 4, y + 18); ctx.lineTo(x - 12, y + 4); ctx.lineTo(x + 2, y + 25);
-    ctx.moveTo(x + 26, y + 18); ctx.lineTo(x + 42, y + 4); ctx.lineTo(x + 28, y + 25);
+    ctx.moveTo(x + 4 * wingScale, y + 18 * wingScale);
+    ctx.lineTo(x - 12 * wingScale, y + 4 * wingScale);
+    ctx.lineTo(x + 2 * wingScale, y + 25 * wingScale);
+    ctx.moveTo(x + size - 4 * wingScale, y + 18 * wingScale);
+    ctx.lineTo(x + size + 12 * wingScale, y + 4 * wingScale);
+    ctx.lineTo(x + size - 2 * wingScale, y + 25 * wingScale);
     ctx.fill();
-    ctx.fillStyle = "#c14b44";
-    ctx.fillRect(x + 5, y + 8, 22, 18);
+    ctx.fillStyle = dragon.boss ? "#ba4a52" : "#c14b44";
+    ctx.fillRect(x + 5, y + 8, size - 10, size * 0.6);
     ctx.fillStyle = "#f6d34a";
-    ctx.fillRect(x + 9, y + 13, 4, 4); ctx.fillRect(x + 19, y + 13, 4, 4);
+    ctx.fillRect(x + size * 0.28, y + 13, 4, 4);
+    ctx.fillRect(x + size * 0.68, y + 13, 4, 4);
     ctx.fillStyle = "#e66b2e";
-    ctx.fillRect(x + 12, y + 25, 8, 5);
+    ctx.fillRect(x + size * 0.4, y + size * 0.8, size * 0.2, 5);
   }
 };
 

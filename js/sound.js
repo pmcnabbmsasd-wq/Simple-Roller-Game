@@ -51,6 +51,9 @@ Sound.startLoop = function () {
     if (self.step % 4 === 0 || self.step % 8 === 0) {
       self.playBass(self.step % 8 === 0 ? 42 : 45);
     }
+    if (self.step === 0 || self.step === 8) {
+      self.sayCashRap();
+    }
   }, 170);
 };
 
@@ -188,6 +191,24 @@ Sound.playHit = function () {
   gain.connect(this.master);
   oscillator.start(now);
   oscillator.stop(now + 0.2);
+};
+
+Sound.sayCashRap = function () {
+  if (!window || !window.speechSynthesis) { return; }
+  var lines = [
+    "I got 20 grand, no cap, that's the real flex.",
+    "Stackin' paper, yeah, I got 50K in the mix.",
+    "Money on me, baby, you know I got the cash.",
+    "Two hundred grand talk, yeah, I'm making it stack."
+  ];
+  var selected = lines[Math.floor(Math.random() * lines.length)];
+  var utterance = new SpeechSynthesisUtterance(selected);
+  utterance.rate = 1.04;
+  utterance.pitch = 1.2;
+  utterance.volume = 0.7;
+  utterance.lang = "en-US";
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
 };
 
 document.addEventListener("pointerdown", function () {

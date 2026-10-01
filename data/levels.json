@@ -10,8 +10,8 @@
       "pieces": ["start", "secret_room", "platform", "platform", "platform", "platform", "platform", "platform", "platform", "finish"]
     },
     {
-      "name": "Level 3 - Watch Your Step",
-      "pieces": ["start", "spikes", "gap", "step", "spikepit", "platform", "gap", "flat", "finish"]
+      "name": "Level 3 - Dragon Boss",
+      "pieces": ["start", "flat", "flat", "flat", "flat", "flat", "flat", "flat", "finish"]
     }
   ]
 }
