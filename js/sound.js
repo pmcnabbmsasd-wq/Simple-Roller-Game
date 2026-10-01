@@ -196,10 +196,11 @@ Sound.playHit = function () {
 Sound.sayCashRap = function () {
   if (!window || !window.speechSynthesis) { return; }
   var lines = [
-    "I got 20 grand, no cap, that's the real flex.",
-    "Stackin' paper, yeah, I got 50K in the mix.",
-    "Money on me, baby, you know I got the cash.",
-    "Two hundred grand talk, yeah, I'm making it stack."
+    "Roman here, I got 20 grand, no cap, that's the real flex.",
+    "Roman in the booth, stackin' paper, yeah, I got 50K in the mix.",
+    "I'm Roman, money on me, baby, you know I got the cash.",
+    "I'm Roman, two hundred grand talk, yeah, I'm making it stack.",
+    "My name is Roman and I love to eat poop, and my iq 7, I dont know how to read and I like to lick feet."
   ];
   var selected = lines[Math.floor(Math.random() * lines.length)];
   var utterance = new SpeechSynthesisUtterance(selected);
