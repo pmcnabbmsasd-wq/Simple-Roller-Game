@@ -89,7 +89,7 @@ Game.spawnDragons = function () {
   Game.dragons = [];
   for (var i = 0; i < Game.dragonCount; i++) {
     var homeY = Math.max(40, Player.y - 100 + (i % 3) * 60);
-    Game.dragons.push({ x: startX + i * 110, y: homeY, homeY: homeY, phase: i * 1.3, shotTimer: CONFIG.DRAGON_SHOT_INTERVAL + i * 20, alive: true, size: CONFIG.DRAGON_SIZE, boss: false });
+    Game.dragons.push({ x: startX + i * 110, y: homeY, homeY: homeY, phase: i * 1.3, shotTimer: CONFIG.DRAGON_SHOT_INTERVAL + i * 20, alive: true, size: CONFIG.DRAGON_SIZE, boss: false, direction: -1 });
   }
 };
 
@@ -107,7 +107,8 @@ Game.spawnBoss = function () {
     boss: true,
     stage: 1,
     hp: 6,
-    goombaTimer: 220
+    goombaTimer: 220,
+    direction: -1
   };
   Game.dragons.push(boss);
   Game.showMessage("Boss dragon incoming. Phase 1: standard fire.");
@@ -241,7 +242,12 @@ Game.updateDragons = function () {
     var dragon = Game.dragons[i];
     if (!dragon.alive) { continue; }
     if (dragon.boss) {
-      dragon.x -= CONFIG.DRAGON_SPEED * 0.6;
+      var bossNextX = dragon.x + dragon.direction * CONFIG.DRAGON_SPEED * 0.6;
+      if (bossNextX < 16 || bossNextX + dragon.size > Level.pixelWidth() - 16 || Collide.hitsSolid(bossNextX, dragon.y, dragon.size, dragon.size)) {
+        dragon.direction *= -1;
+      } else {
+        dragon.x = bossNextX;
+      }
       dragon.phase += 0.05;
       dragon.y = dragon.homeY + Math.sin(dragon.phase) * 18;
       dragon.shotTimer -= 1;
@@ -272,7 +278,13 @@ Game.updateDragons = function () {
       }
       continue;
     }
-    dragon.x -= CONFIG.DRAGON_SPEED;
+    var nextDragonX = dragon.x + dragon.direction * CONFIG.DRAGON_SPEED;
+    if (nextDragonX < 16 || nextDragonX + dragon.size > Level.pixelWidth() - 16 ||
+        Collide.hitsSolid(nextDragonX, dragon.y, dragon.size, dragon.size)) {
+      dragon.direction *= -1;
+    } else {
+      dragon.x = nextDragonX;
+    }
     dragon.phase += 0.06;
     dragon.y = dragon.homeY + Math.sin(dragon.phase) * 28;
     dragon.shotTimer -= 1;
