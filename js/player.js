@@ -42,6 +42,7 @@ Player.update = function () {
   if (Input.jump && Player.onGround) {
     Player.vy = -CONFIG.JUMP_POWER;
     Player.onGround = false;
+    if (typeof Sound !== "undefined" && Sound.playJump) { Sound.playJump(); }
   }
 
   var nextX = Player.x + Player.vx;

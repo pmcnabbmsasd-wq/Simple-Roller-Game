@@ -7,7 +7,7 @@
     },
     {
       "name": "Level 2 - Floating Dragon Run",
-      "pieces": ["start", "secret_room", "floating_left", "floating_center", "floating_right", "floating_wide", "floating_left", "floating_center", "floating_right", "finish"]
+      "pieces": ["start", "secret_room", "platform", "platform", "platform", "platform", "platform", "platform", "platform", "finish"]
     },
     {
       "name": "Level 3 - Watch Your Step",

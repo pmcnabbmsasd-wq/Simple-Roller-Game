@@ -122,6 +122,7 @@ Game.shoot = function () {
   var direction = Player.facing;
   Game.bullets.push({ x: Player.x + (direction > 0 ? CONFIG.PLAYER_SIZE : -8), y: Player.y + CONFIG.PLAYER_SIZE / 2 - 2, vx: CONFIG.LASER_SPEED * direction, distance: 0 });
   Game.ammo = Game.ammo - 1;
+  if (typeof Sound !== "undefined" && Sound.playShoot) { Sound.playShoot(); }
   Game.showAmmo();
 };
 
@@ -229,8 +230,17 @@ Game.updateFireballs = function () {
 };
 
 Game.checkEnemyCollisions = function () {
-  if (Game.hitsDragon(Player.x, Player.y, CONFIG.PLAYER_SIZE, CONFIG.PLAYER_SIZE)) {
-    Player.dead = true;
+  for (var i = 0; i < Game.dragons.length; i++) {
+    var dragon = Game.dragons[i];
+    if (!dragon.alive || !Collide.overlaps(Player.x, Player.y, CONFIG.PLAYER_SIZE, CONFIG.PLAYER_SIZE,
+        dragon.x, dragon.y, CONFIG.DRAGON_SIZE, CONFIG.DRAGON_SIZE)) { continue; }
+    if (Player.vy > 0 && Player.y + CONFIG.PLAYER_SIZE - dragon.y < 14) {
+      dragon.alive = false;
+      Player.vy = -CONFIG.JUMP_POWER * 0.55;
+      Player.onGround = false;
+    } else {
+      Player.dead = true;
+    }
   }
   for (var i = 0; i < Game.goombas.length; i++) {
     var goomba = Game.goombas[i];
@@ -269,9 +279,14 @@ Game.update = function () {
   Game.updateBullets();
   Game.checkEnemyCollisions();
 
-  if (Player.isDead()) { Game.loseLife(); return; }
+  if (Player.isDead()) {
+    if (typeof Sound !== "undefined" && Sound.playHit) { Sound.playHit(); }
+    Game.loseLife();
+    return;
+  }
   if (Player.hasWon()) {
     Game.mode = "won";
+    if (typeof Sound !== "undefined" && Sound.playHit) { Sound.playHit(); }
     if (Game.levelNumber + 1 < Level.levels.length) {
       Game.showMessage("Level complete! Press N or click Next Level.");
       Game.setNextLevelButton(true);

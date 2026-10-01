@@ -9,6 +9,7 @@ var Input = {
 };
 
 window.addEventListener("keydown", function (event) {
+  Sound.ensureStarted();
   setKey(event.key, true);
   if (["ArrowLeft", "ArrowRight", "ArrowUp", " ", "x", "X", "e", "E", "n", "N"].indexOf(event.key) >= 0) {
     event.preventDefault();
